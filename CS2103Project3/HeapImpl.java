@@ -17,13 +17,21 @@ class HeapImpl<T extends Comparable<? super T>> implements Heap<T> {
 	public void add (T data) {
 		// TODO: implement me
 		if (_numElements == _storage.length) {
-			T[] _newStorage = (T[]) new Comparable[_storage.length* THE_MULTIPLIER_USED_TO_FIND_THE_STORAGE_INDEX];
-			System.arraycopy(_storage, 0, _newStorage, 0, _storage.length);
-			_storage = _newStorage;
+			expandStorage();
 		}
 		_storage[_numElements] = data;
 		_numElements++;
-		trickleDown(0);
+		if (_storage[(_numElements-1)/THE_MULTIPLIER_USED_TO_FIND_THE_STORAGE_INDEX].compareTo(_storage[_numElements-1]) < 0) {
+			bubbleUp(_numElements-1);
+		}
+	}
+
+	private void expandStorage() {
+		T[] _newStorage = (T[]) new Comparable[_storage.length* THE_MULTIPLIER_USED_TO_FIND_THE_STORAGE_INDEX];
+		for (int i = 0; i < _storage.length; i++) {
+			_newStorage[i] = _storage[i];
+		}
+		_storage = _newStorage;
 	}
 
 	public T removeFirst () {
@@ -31,19 +39,27 @@ class HeapImpl<T extends Comparable<? super T>> implements Heap<T> {
 		if (_numElements == 0) {
 			return null;
 		} else {
-			int maxIndex = 0;
-			for (int i = 0; i < _numElements; i++) {
-				if (_storage[i].compareTo(_storage[maxIndex])>0) {
-					maxIndex = i;
-				}
-			}
-			T temp = _storage[maxIndex];
+			T temp = _storage[0];
 			_storage[0] = _storage[_numElements - 1];
 			_numElements--;
 			trickleDown(0);
 			return temp;
 		}
 	}
+
+	void bubbleUp(int index) {
+		if (index == 0) {
+			return;
+		}
+		int parentIndex = (index - 1) / THE_MULTIPLIER_USED_TO_FIND_THE_STORAGE_INDEX;
+		if (_storage[index].compareTo(_storage[parentIndex]) > 0) {
+			T temp = _storage[index];
+			_storage[index] = _storage[parentIndex];
+			_storage[parentIndex] = temp;
+			bubbleUp(parentIndex);
+		}
+	}
+
 	void trickleDown (int index) {
 		int _leftChild = index* THE_MULTIPLIER_USED_TO_FIND_THE_STORAGE_INDEX +LEFT_CHILD_INDEXER;
 		// index of left child since y'all hate magic numbers and took marks off our project 1
