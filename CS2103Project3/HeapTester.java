@@ -27,6 +27,8 @@ public class HeapTester {
 			heap.add(numbers[i]);
 		}
 		assertEquals(N, heap.size());
+		// q: what is the assertEquals((Integer) i, heap.removeFirst()); doing?
+		// a: it's checking that the first element in the heap is the same as the first element in the array
 		for (int i = N-1; i >= 0; i--) {
 			assertEquals((Integer) i, heap.removeFirst());
 		}
