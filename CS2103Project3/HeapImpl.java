@@ -107,6 +107,7 @@ class HeapImpl<T extends Comparable<? super T>> implements Heap<T> {
 		}
 	}
 
+	// return the number of elements in the heap
 	public int size () {
 		return _numElements;
 	}
